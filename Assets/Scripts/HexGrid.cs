@@ -52,11 +52,12 @@ public class HexGrid : MonoBehaviour
 		var cellTransform = cell.transform;
 		cellTransform.SetParent(transform, false);
 		cellTransform.localPosition = position;
+		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 
 		var label = Instantiate(cellLabelPrefab);
 		var labelTransform = label.rectTransform;
 		labelTransform.SetParent(gridCanvas.transform, false);
 		labelTransform.anchoredPosition = new Vector2(position.x, position.z);
-		label.text = $"({x}, {z})";
+		label.text = cell.coordinates.ToStringOnSeparatesLines();
 	}
 }
