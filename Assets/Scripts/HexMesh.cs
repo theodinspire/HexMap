@@ -31,6 +31,8 @@ public class HexMesh : MonoBehaviour
 		hexMesh.colors = colors.ToArray();
 
 		hexMesh.RecalculateNormals();
+
+		meshCollider.sharedMesh = hexMesh;
 	}
 
 	void Awake()
@@ -39,7 +41,6 @@ public class HexMesh : MonoBehaviour
 		hexMesh.name = "Hex Mesh";
 
 		meshCollider = gameObject.AddComponent<MeshCollider>();
-		meshCollider.sharedMesh = hexMesh;
 
 		vertices = new List<Vector3>();
 		triangles = new List<int>();
