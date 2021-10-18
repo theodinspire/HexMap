@@ -14,4 +14,14 @@ public static class HexDirectionExtensions
 	{
 		return (HexDirection)(((int)direction + 3) % 6);
 	}
+
+	public static HexDirection Next(this HexDirection direction)
+	{
+		return (HexDirection)(((int)direction + 1) % 6);
+	}
+
+	public static HexDirection Previous(this HexDirection direction)
+	{
+		return (HexDirection)(((int)direction + 5) % 6);
+	}
 }
