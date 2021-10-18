@@ -8,14 +8,18 @@ using UnityEngine;
 public class HexMesh : MonoBehaviour
 {
 	Mesh hexMesh;
+	MeshCollider meshCollider;
+
 	List<Vector3> vertices;
 	List<int> triangles;
+	List<Color> colors;
 
 	public void Triangulate(HexCell[] cells)
 	{
 		hexMesh.Clear();
 		vertices.Clear();
 		triangles.Clear();
+		colors.Clear();
 
 		foreach (var cell in cells)
 		{
@@ -24,6 +28,8 @@ public class HexMesh : MonoBehaviour
 
 		hexMesh.vertices = vertices.ToArray();
 		hexMesh.triangles = triangles.ToArray();
+		hexMesh.colors = colors.ToArray();
+
 		hexMesh.RecalculateNormals();
 	}
 
@@ -31,8 +37,13 @@ public class HexMesh : MonoBehaviour
 	{
 		GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
 		hexMesh.name = "Hex Mesh";
+
+		meshCollider = gameObject.AddComponent<MeshCollider>();
+		meshCollider.sharedMesh = hexMesh;
+
 		vertices = new List<Vector3>();
 		triangles = new List<int>();
+		colors = new List<Color>();
 	}
 
 	void Triangulate(HexCell cell)
@@ -42,6 +53,7 @@ public class HexMesh : MonoBehaviour
 		for (int i = 0; i < 6; i++)
 		{
 			AddTriangle(center, center + HexMetrics.Corners[i], center + HexMetrics.Corners[i + 1]);
+			AddTriangleColor(cell.color);
 		}
 	}
 
@@ -51,5 +63,11 @@ public class HexMesh : MonoBehaviour
 
 		vertices.Add(u, v, w);
 		triangles.Add(index, index + 1, index + 2);
+	}
+
+	void AddTriangleColor(Color color)
+	{
+		// Each vertex on a face gets a color
+		colors.Add(color, color, color);
 	}
 }

@@ -8,6 +8,9 @@ public class HexGrid : MonoBehaviour
 	public int width = 6;
 	public int height = 6;
 
+	public Color defaultColor = Color.white;
+	public Color touchedColor = Color.magenta;
+
 	// Prefabs
 	public HexCell cellPrefab;
 	public Text cellLabelPrefab;
@@ -38,6 +41,11 @@ public class HexGrid : MonoBehaviour
 		hexMesh.Triangulate(cells);
 	}
 
+	void Update()
+	{
+		if (Input.GetMouseButton(0)) HandleInput();
+	}
+
 	void CreateCell(int x, int z, int i)
 	{
 		var position = new Vector3
@@ -53,11 +61,33 @@ public class HexGrid : MonoBehaviour
 		cellTransform.SetParent(transform, false);
 		cellTransform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+		cell.color = defaultColor;
 
 		var label = Instantiate(cellLabelPrefab);
 		var labelTransform = label.rectTransform;
 		labelTransform.SetParent(gridCanvas.transform, false);
 		labelTransform.anchoredPosition = new Vector2(position.x, position.z);
 		label.text = cell.coordinates.ToStringOnSeparatesLines();
+	}
+
+	void HandleInput()
+	{
+		var inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+		if (Physics.Raycast(inputRay, out var hit))
+		{
+			TouchCell(hit.point);
+		}
+	}
+
+	void TouchCell(Vector3 position)
+	{
+		var location = transform.InverseTransformPoint(position);
+		var coordinates = HexCoordinates.FromPosition(location);
+		var index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+
+		var cell = cells[index];
+		cell.color = touchedColor;
+		hexMesh.Triangulate(cells);
 	}
 }
