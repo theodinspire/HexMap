@@ -15,11 +15,13 @@ public class HexGrid : MonoBehaviour
 	// Private items
 	HexCell[] cells;
 	Canvas gridCanvas;
+	HexMesh hexMesh;
 
 	void Awake()
 	{
 		gridCanvas = GetComponentInChildren<Canvas>();
-		
+		hexMesh = GetComponentInChildren<HexMesh>();
+
 		cells = new HexCell[height * width];
 
 		for (int z = 0, i = 0; z < height; z++)
@@ -29,6 +31,11 @@ public class HexGrid : MonoBehaviour
 				CreateCell(x, z, i++);
 			}
 		}
+	}
+
+	void Start()
+	{
+		hexMesh.Triangulate(cells);
 	}
 
 	void CreateCell(int x, int z, int i)
@@ -41,7 +48,7 @@ public class HexGrid : MonoBehaviour
 		};
 
 		var cell = cells[i] = Instantiate(cellPrefab);
-		
+
 		var cellTransform = cell.transform;
 		cellTransform.SetParent(transform, false);
 		cellTransform.localPosition = position;
@@ -50,6 +57,6 @@ public class HexGrid : MonoBehaviour
 		var labelTransform = label.rectTransform;
 		labelTransform.SetParent(gridCanvas.transform, false);
 		labelTransform.anchoredPosition = new Vector2(position.x, position.z);
-		label.text = $"{x}\n{z}";
+		label.text = $"({x}, {z})";
 	}
 }
