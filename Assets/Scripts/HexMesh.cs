@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using Extensions;
 using UnityEngine;
 
@@ -79,9 +80,15 @@ public class HexMesh : MonoBehaviour
 		var w = u + bridge;
 		v.y = w.y = neighbor.Elevation * HexMetrics.ElevationStep;
 
-		TriangulateEdgeTerraces(t, u, cell, v, w, neighbor);
-		// AddQuad(t, u, v, w);
-		// AddQuadColor(cell.color, neighbor.color);
+		if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
+		{
+			TriangulateEdgeTerraces(t, u, cell, v, w, neighbor);
+		}
+		else
+		{
+			AddQuad(t, u, v, w);
+			AddQuadColor(cell.color, neighbor.color);
+		}
 
 		var nextDirection = direction.Next();
 

@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using UnityEngine;
 
 public class HexCell: MonoBehaviour
@@ -9,7 +10,7 @@ public class HexCell: MonoBehaviour
 
 	public Color color;
 
-	public RectTransform uiRect; 
+	public RectTransform uiRect;
 
 	[SerializeField]
 	HexCell[] neighbors;
@@ -39,5 +40,11 @@ public class HexCell: MonoBehaviour
 	{
 		neighbors[(int)direction] = cell;
 		cell.neighbors[(int)direction.Opposite()] = this;
+	}
+
+	public HexEdgeType GetEdgeType(HexDirection direction)
+	{
+		return HexMetrics.GetEdgeType(
+			Elevation, neighbors[(int)direction].Elevation);
 	}
 }

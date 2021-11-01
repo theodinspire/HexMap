@@ -1,3 +1,4 @@
+using DefaultNamespace;
 using UnityEngine;
 
 public static class HexMetrics
@@ -71,5 +72,15 @@ public static class HexMetrics
 	{
 		var h = step * HorizontalTerraceStepSize;
 		return Color.Lerp(a, b, h);
+	}
+
+	public static HexEdgeType GetEdgeType(int thisElevation, int thatElevation)
+	{
+		if (thisElevation == thatElevation) return HexEdgeType.Flat;
+
+		var delta = thisElevation - thatElevation;
+		if (delta == 1 || delta == -1) return HexEdgeType.Slope;
+
+		return HexEdgeType.Cliff;
 	}
 }
