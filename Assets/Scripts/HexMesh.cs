@@ -79,8 +79,9 @@ public class HexMesh : MonoBehaviour
 		var w = u + bridge;
 		v.y = w.y = neighbor.Elevation * HexMetrics.ElevationStep;
 
-		AddQuad(t, u, v, w);
-		AddQuadColor(cell.color, neighbor.color);
+		TriangulateEdgeTerraces(t, u, cell, v, w, neighbor);
+		// AddQuad(t, u, v, w);
+		// AddQuadColor(cell.color, neighbor.color);
 
 		var nextDirection = direction.Next();
 
@@ -92,6 +93,39 @@ public class HexMesh : MonoBehaviour
 		
 		AddTriangle(u, w, x);
 		AddTriangleColor(cell.color, neighbor.color, next.color);
+	}
+
+	void TriangulateEdgeTerraces(
+		Vector3 beginLeft,
+		Vector3 beginRight,
+		HexCell beginCell,
+		Vector3 endLeft,
+		Vector3 endRight,
+		HexCell endCell)
+	{
+		var v = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
+		var w = HexMetrics.TerraceLerp(beginRight, endRight, 1);
+		var nextColor = HexMetrics.TerraceLerp(beginCell.color, endCell.color, 1);
+
+		AddQuad(beginLeft, beginRight, v, w);
+		AddQuadColor(beginCell.color, nextColor);
+
+		for (int i = 2; i < HexMetrics.TerraceSteps; i++)
+		{
+			var t = v;
+			var u = w;
+			var previousColor = nextColor;
+
+			v = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
+			w = HexMetrics.TerraceLerp(beginRight, endRight, i);
+			nextColor = HexMetrics.TerraceLerp(beginCell.color, endCell.color, i);
+
+			AddQuad(t, u, v, w);
+			AddQuadColor(previousColor, nextColor);
+		}
+
+		AddQuad(v, w, endLeft, endRight);
+		AddQuadColor(nextColor, endCell.color);
 	}
 
 	void AddTriangle(Vector3 u, Vector3 v, Vector3 w)
